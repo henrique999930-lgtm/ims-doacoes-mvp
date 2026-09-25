@@ -51,6 +51,10 @@ class Item(models.Model):
     class Meta:
         ordering = ["nome"]
 
+    @property
+    def estoque_baixo(self):
+        return self.estoque_atual <= self.estoque_minimo
+
     def __str__(self):
         return self.nome
 

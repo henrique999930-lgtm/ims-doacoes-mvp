@@ -15,7 +15,7 @@
             <td>{{ item.get_unidade_medida_display }}</td>
             <td class="text-end fw-semibold">
               {{ item.estoque_atual }}
-              {% if item.estoque_atual <= item.estoque_minimo %}
+              {% if item.estoque_baixo %}
                 <span class="badge text-bg-warning ms-1">Estoque baixo</span>
               {% endif %}
             </td>

@@ -29,6 +29,15 @@ class InventoryServiceTests(TestCase):
                 item_id=self.item.pk, tipo="saida", quantidade="25", user=self.user
             )
 
+    def test_identifica_estoque_baixo(self):
+        self.item.estoque_minimo = Decimal("20.00")
+        self.item.save(update_fields=["estoque_minimo"])
+        self.assertTrue(self.item.estoque_baixo)
+
+        self.item.estoque_atual = Decimal("25.00")
+        self.item.save(update_fields=["estoque_atual"])
+        self.assertFalse(self.item.estoque_baixo)
+
 
 class DeliveryServiceTests(TestCase):
     def setUp(self):
