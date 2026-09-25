@@ -24,7 +24,13 @@
         <label class="form-label" for="{{ form.quantidade.id_for_label }}">Quantidade</label>
         {{ form.quantidade }}
       </div>
-      {% if form.errors %}<div class="col-12 text-danger small">{{ form.errors }}</div>{% endif %}
+      {% if form.errors %}
+      <div class="col-12">
+        <div class="alert alert-danger py-2" role="alert">
+          Revise os campos do item {{ forloop.counter }}: {{ form.errors }}
+        </div>
+      </div>
+      {% endif %}
     {% endfor %}
   </div>
   <div class="mt-3">
