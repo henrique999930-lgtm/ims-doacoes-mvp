@@ -61,6 +61,24 @@ class DeliveryServiceTests(TestCase):
         self.assertEqual(self.arroz.estoque_atual, Decimal("20.00"))
 
 
+    def test_entrega_consolida_item_repetido(self):
+        delivery = register_delivery(
+            family=self.family,
+            user=self.user,
+            lines=[(self.arroz.pk, "1"), (self.arroz.pk, "2")],
+        )
+
+        self.arroz.refresh_from_db()
+
+        item_entrega = DeliveryItem.objects.get(
+            delivery=delivery,
+            item=self.arroz,
+        )
+
+        self.assertEqual(item_entrega.quantidade, Decimal("3.00"))
+        self.assertEqual(self.arroz.estoque_atual, Decimal("17.00"))
+
+
 class AuthenticationTests(TestCase):
     def test_home_exige_login(self):
         response = self.client.get(reverse("home"))

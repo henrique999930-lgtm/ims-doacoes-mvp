@@ -33,21 +33,31 @@ def apply_stock_movement(*, item_id, tipo, quantidade, user):
     )
 
 
+def _consolidate_delivery_lines(lines):
+    """Valida e consolida quantidades repetidas do mesmo item."""
+    consolidated = defaultdict(lambda: Decimal("0"))
+
+    for item_id, quantidade in lines:
+        quantidade = Decimal(str(quantidade))
+
+        if quantidade <= 0:
+            raise ValidationError("As quantidades devem ser maiores que zero.")
+
+        consolidated[int(item_id)] += quantidade
+
+    if not consolidated:
+        raise ValidationError("Informe pelo menos um item para a entrega.")
+
+    return consolidated
+
+
 @transaction.atomic
 def register_delivery(*, family, user, lines, observacao=""):
     """Registra uma entrega e atualiza o estoque de forma atômica.
 
     lines: iterável de pares (item_id, quantidade).
     """
-    consolidated = defaultdict(lambda: Decimal("0"))
-    for item_id, quantidade in lines:
-        quantidade = Decimal(quantidade)
-        if quantidade <= 0:
-            raise ValidationError("As quantidades devem ser maiores que zero.")
-        consolidated[int(item_id)] += quantidade
-
-    if not consolidated:
-        raise ValidationError("Informe pelo menos um item para a entrega.")
+    consolidated = _consolidate_delivery_lines(lines)
 
     items = {
         item.pk: item
