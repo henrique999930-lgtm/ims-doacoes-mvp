@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Entrega registrada | IMS Doações{% endblock %}
+{% block content %}
+<div class="result-panel shadow-sm" role="status" aria-live="polite">
+  <div class="result-icon" aria-hidden="true">✓</div>
+  <p class="text-uppercase fw-semibold mb-1">Atendimento concluído</p>
+  <h1 class="display-6 fw-bold">Entrega registrada com sucesso</h1>
+  <p class="mb-0">Família: <strong>{{ delivery.family.nome_responsavel }}</strong></p>
+</div>
+<div class="card shadow-sm mt-4">
+  <div class="card-body">
+    <div class="row g-3 mb-3">
+      <div class="col-md-4"><strong>Entrega</strong><br>#{{ delivery.pk }}</div>
+      <div class="col-md-4"><strong>Data</strong><br>{{ delivery.data_hora|date:"d/m/Y H:i" }}</div>
+      <div class="col-md-4"><strong>Responsável</strong><br>{{ delivery.responsavel.username }}</div>
+    </div>
+    <h2 class="h5">Itens distribuídos e saldo atualizado</h2>
+    <div class="table-responsive">
+      <table class="table align-middle">
+        <thead><tr><th>Item</th><th class="text-end">Entregue</th><th class="text-end">Saldo atual</th></tr></thead>
+        <tbody>
+          {% for line in delivery.itens_entregues.all %}
+            <tr><td>{{ line.item.nome }}</td><td class="text-end">{{ line.quantidade }}</td><td class="text-end fw-semibold">{{ line.item.estoque_atual }}</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<div class="mt-4 d-flex gap-2 flex-wrap">
+  <a class="btn btn-primary btn-lg tap-target" href="{% url 'home' %}">Novo atendimento</a>
+  <a class="btn btn-outline-primary btn-lg tap-target" href="{% url 'stock' %}">Ver estoque</a>
+  <a class="btn btn-outline-secondary btn-lg tap-target" href="{% url 'home' %}">Voltar ao início</a>
+</div>
+{% endblock %}

@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Estoque | IMS Doações{% endblock %}
+{% block content %}
+<div class="row g-4">
+  <div class="col-lg-7">
+    <h1 class="h2">Controle de estoque</h1>
+    <p class="text-secondary">Consulte o saldo atual dos itens disponíveis.</p>
+    <div class="table-responsive card shadow-sm">
+      <table class="table table-hover align-middle mb-0">
+        <thead><tr><th>Item</th><th>Unidade</th><th class="text-end">Saldo</th><th class="text-end">Mínimo</th></tr></thead>
+        <tbody>
+          {% for item in items %}
+          <tr>
+            <td>{{ item.nome }}</td>
+            <td>{{ item.get_unidade_medida_display }}</td>
+            <td class="text-end fw-semibold">{{ item.estoque_atual }}</td>
+            <td class="text-end">{{ item.estoque_minimo }}</td>
+          </tr>
+          {% empty %}<tr><td colspan="4">Nenhum item cadastrado.</td></tr>{% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="col-lg-5">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h2 class="h4">Registrar movimentação</h2>
+        <form method="post" novalidate>
+          {% csrf_token %}
+          {% if form.non_field_errors %}<div class="alert alert-danger">{{ form.non_field_errors }}</div>{% endif %}
+          {% for field in form %}
+            <div class="mb-3"><label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}{% for error in field.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}</div>
+          {% endfor %}
+          <button class="btn btn-primary tap-target" type="submit">Salvar movimentação</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

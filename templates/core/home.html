@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Famílias | IMS Doações{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-start gap-3 flex-wrap mb-4">
+  <div>
+    <p class="text-primary fw-semibold mb-1">ATENDIMENTO</p>
+    <h1 class="display-6 fw-bold">Consulta de famílias</h1>
+    <p class="text-secondary">Localize a família para consultar o cadastro e iniciar uma nova entrega.</p>
+  </div>
+  <a class="btn btn-outline-primary tap-target" href="{% url 'family_create' %}">+ Nova família</a>
+</div>
+<form method="get" class="card card-body shadow-sm mb-4" role="search">
+  <label for="q" class="form-label fw-semibold">Nome ou código da família</label>
+  <div class="input-group input-group-lg">
+    <input id="q" name="q" value="{{ query }}" class="form-control" placeholder="Ex.: Maria Exemplo" required>
+    <button class="btn btn-primary tap-target" type="submit">Pesquisar</button>
+  </div>
+</form>
+{% if query %}
+<section aria-labelledby="resultado-busca">
+  <h2 id="resultado-busca" class="h4">Resultados</h2>
+  {% if families %}
+  <div class="row g-3">
+    {% for family in families %}
+    <div class="col-lg-6">
+      <article class="card h-100 shadow-sm">
+        <div class="card-body">
+          <div class="d-flex justify-content-between gap-3">
+            <div>
+              <h3 class="h5 mb-1">{{ family.nome_responsavel }}</h3>
+              <p class="mb-1"><strong>Código:</strong> {{ family.pk }}</p>
+              <p class="mb-1"><strong>Membros:</strong> {{ family.quantidade_membros }}</p>
+              <p class="mb-0"><span class="badge text-bg-success">Cadastro ativo</span></p>
+            </div>
+            <div class="d-flex align-items-end">
+              <a class="btn btn-success tap-target" href="{% url 'delivery_create' family.pk %}">Registrar entrega</a>
+            </div>
+          </div>
+        </div>
+      </article>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+    <div class="alert alert-warning" role="status">Nenhuma família ativa encontrada para “{{ query }}”.</div>
+  {% endif %}
+</section>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Entrar | IMS Doações{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-5">
+    <div class="card shadow-sm">
+      <div class="card-body p-4">
+        <h1 class="h3 mb-3">Acesso ao sistema</h1>
+        <p class="text-secondary">Entre com um usuário autorizado para acessar os registros do MVP.</p>
+        <form method="post" novalidate>
+          {% csrf_token %}
+          {% if form.non_field_errors %}<div class="alert alert-danger">{{ form.non_field_errors }}</div>{% endif %}
+          <div class="mb-3">
+            <label for="id_username" class="form-label">Usuário</label>
+            <input id="id_username" class="form-control" type="text" name="username" autocomplete="username" required autofocus>
+          </div>
+          <div class="mb-3">
+            <label for="id_password" class="form-label">Senha</label>
+            <input id="id_password" class="form-control" type="password" name="password" autocomplete="current-password" required>
+          </div>
+          <button class="btn btn-primary w-100 tap-target" type="submit">Entrar</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

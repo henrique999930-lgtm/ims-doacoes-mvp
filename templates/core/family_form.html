@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Nova família | IMS Doações{% endblock %}
+{% block content %}
+<h1 class="h2">Cadastrar família</h1>
+<p class="text-secondary">Registre somente os dados mínimos necessários ao atendimento.</p>
+<form method="post" class="card card-body shadow-sm" novalidate>
+  {% csrf_token %}
+  {% if form.non_field_errors %}<div class="alert alert-danger">{{ form.non_field_errors }}</div>{% endif %}
+  <div class="row g-3">
+    {% for field in form %}
+      <div class="col-md-6 {% if field.name == 'observacoes' %}col-md-12{% endif %}">
+        {% if field.field.widget.input_type == 'checkbox' %}
+          <div class="form-check mt-4">{{ field }} <label class="form-check-label" for="{{ field.id_for_label }}">{{ field.label }}</label></div>
+        {% else %}
+          <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}
+        {% endif %}
+        {% for error in field.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+      </div>
+    {% endfor %}
+  </div>
+  <div class="mt-4 d-flex gap-2">
+    <button class="btn btn-primary tap-target" type="submit">Salvar família</button>
+    <a class="btn btn-outline-secondary tap-target" href="{% url 'home' %}">Cancelar</a>
+  </div>
+</form>
+{% endblock %}

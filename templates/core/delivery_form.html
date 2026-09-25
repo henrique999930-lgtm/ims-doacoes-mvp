@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Registrar entrega | IMS Doações{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between gap-3 flex-wrap mb-3">
+  <div>
+    <p class="text-primary fw-semibold mb-1">NOVA ENTREGA</p>
+    <h1 class="h2">Registrar entrega de alimentos</h1>
+    <p class="mb-0"><strong>Família:</strong> {{ family.nome_responsavel }} · {{ family.quantidade_membros }} membros</p>
+  </div>
+  <a class="btn btn-outline-secondary tap-target" href="{% url 'home' %}">Cancelar</a>
+</div>
+<div class="alert alert-info" role="status">Informe os itens e quantidades. O sistema não permitirá saída superior ao estoque disponível.</div>
+<form method="post" class="card card-body shadow-sm" novalidate>
+  {% csrf_token %}
+  {{ formset.management_form }}
+  {% if formset.non_form_errors %}<div class="alert alert-danger" role="alert">{{ formset.non_form_errors }}</div>{% endif %}
+  <div class="row g-3">
+    {% for form in formset %}
+      <div class="col-md-7">
+        <label class="form-label" for="{{ form.item.id_for_label }}">Item {{ forloop.counter }}</label>
+        {{ form.item }}
+      </div>
+      <div class="col-md-5">
+        <label class="form-label" for="{{ form.quantidade.id_for_label }}">Quantidade</label>
+        {{ form.quantidade }}
+      </div>
+      {% if form.errors %}<div class="col-12 text-danger small">{{ form.errors }}</div>{% endif %}
+    {% endfor %}
+  </div>
+  <div class="mt-3">
+    <label class="form-label" for="observacao">Observação (opcional)</label>
+    <textarea id="observacao" name="observacao" class="form-control" rows="2"></textarea>
+  </div>
+  <div class="mt-4 d-flex gap-2">
+    <button class="btn btn-success btn-lg tap-target" type="submit">Confirmar entrega</button>
+    <a class="btn btn-outline-secondary btn-lg tap-target" href="{% url 'home' %}">Cancelar</a>
+  </div>
+</form>
+<section class="mt-4" aria-labelledby="saldo-atual">
+  <h2 id="saldo-atual" class="h5">Saldo atual</h2>
+  <div class="d-flex flex-wrap gap-2">
+    {% for item in items %}<span class="badge text-bg-light border p-2">{{ item.nome }}: {{ item.estoque_atual }} {{ item.unidade_medida }}</span>{% endfor %}
+  </div>
+</section>
+{% endblock %}

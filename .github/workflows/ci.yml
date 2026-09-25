@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_DB: ims_test
+          POSTGRES_USER: ims
+          POSTGRES_PASSWORD: ims
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U ims -d ims_test"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL: postgresql://ims:ims@127.0.0.1:5432/ims_test
+      DJANGO_SECRET_KEY: ci-only-secret
+      DJANGO_DEBUG: "False"
+      DJANGO_ALLOWED_HOSTS: localhost,127.0.0.1
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Instalar dependências
+        run: pip install -r requirements.txt
+      - name: Verificar migrações
+        run: python manage.py makemigrations --check --dry-run
+      - name: Aplicar migrações
+        run: python manage.py migrate
+      - name: Executar testes
+        run: python manage.py test
