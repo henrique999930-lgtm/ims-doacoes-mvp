@@ -1,3 +1,6 @@
+import os
+
+from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand
 
 from core.models import Family, Item
@@ -23,4 +26,17 @@ class Command(BaseCommand):
             nome="Macarrão",
             defaults={"unidade_medida": "PCT", "estoque_atual": 12, "estoque_minimo": 4},
         )
+        username = os.getenv("DEMO_USERNAME", "").strip()
+        password = os.getenv("DEMO_PASSWORD", "").strip()
+
+        if username and password:
+            User = get_user_model()
+            user, _ = User.objects.get_or_create(username=username)
+            user.is_active = True
+            user.set_password(password)
+            user.save()
+            self.stdout.write(
+                self.style.SUCCESS(f"Usuário de demonstração '{username}' preparado.")
+            )
+
         self.stdout.write(self.style.SUCCESS("Dados fictícios criados com sucesso."))
