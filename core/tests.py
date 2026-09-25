@@ -66,3 +66,29 @@ class AuthenticationTests(TestCase):
         response = self.client.get(reverse("home"))
         self.assertEqual(response.status_code, 302)
         self.assertIn(reverse("login"), response.url)
+
+
+class HomeSearchTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username="atendente",
+            password="SenhaSegura123!"
+        )
+        self.ativa = Family.objects.create(
+            nome_responsavel="Familia Exemplo Ativa",
+            quantidade_membros=4,
+            ativo=True,
+        )
+        self.inativa = Family.objects.create(
+            nome_responsavel="Familia Exemplo Inativa",
+            quantidade_membros=3,
+            ativo=False,
+        )
+
+    def test_busca_exibe_apenas_familias_ativas(self):
+        self.client.force_login(self.user)
+        response = self.client.get(reverse("home"), {"q": "Exemplo"})
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Familia Exemplo Ativa")
+        self.assertNotContains(response, "Familia Exemplo Inativa")
